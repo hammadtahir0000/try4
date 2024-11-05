@@ -300,3 +300,4 @@ D:\somewhat\My__BUSNESS\try4\try4\try4\obj\Debug\net8.0\refint\try4.dll
 D:\somewhat\My__BUSNESS\try4\try4\try4\obj\Debug\net8.0\try4.pdb
 D:\somewhat\My__BUSNESS\try4\try4\try4\obj\Debug\net8.0\try4.genruntimeconfig.cache
 D:\somewhat\My__BUSNESS\try4\try4\try4\obj\Debug\net8.0\ref\try4.dll
+D:\somewhat\My__BUSNESS\try4\try4\try4\obj\Debug\net8.0\try4.sourcelink.json

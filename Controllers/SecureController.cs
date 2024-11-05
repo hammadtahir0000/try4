@@ -8,12 +8,12 @@ namespace try4.Controllers
     public class SecureController : ControllerBase
     {
         // Endpoint accessible only by Admins
-        [Authorize(Roles = "Admin")]
-        [HttpGet("admin-only")]
+        [Authorize(Roles = "admin")]
+        [Route("admin-only")]
+        [HttpGet]
         public IActionResult AdminOnly()
         {
-            // Instruct the frontend to redirect to the Admin Dashboard
-            return Ok(new { Message = "Welcome, Admin!", RedirectTo = "/admin/dashboard" });
+            return Ok("Welcome, Admin!");
         }
 
         // Endpoint accessible only by Users
@@ -26,7 +26,7 @@ namespace try4.Controllers
         }
 
         // Endpoint accessible by both Admins and Users
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "admin,User")]
         [HttpGet("admin-or-user")]
         public IActionResult AdminOrUser()
         {

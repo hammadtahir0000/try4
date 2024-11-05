@@ -17,7 +17,7 @@ public class AuthController : ControllerBase
         _roleManager = roleManager;
         _jwtTokenService = jwtTokenService;
     }
-
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
@@ -105,6 +105,37 @@ public class AuthController : ControllerBase
         return Unauthorized();
     }
 
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+    {
+        // Find the user by username
+        var user = await _userManager.FindByNameAsync(model.Username);
+        if (user == null)
+            return NotFound(new { Status = "Error", Message = "User not found!" });
+
+        // Attempt to change the password
+        var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            return BadRequest(new { Status = "Error", Message = $"Password change failed! {errors}" });
+        }
+
+        return Ok(new { Status = "Success", Message = "Password changed successfully!" });
+    }
+
+
+    [HttpGet("check-roles/{username}")]
+    public async Task<IActionResult> CheckUserRoles(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+            return NotFound("User not found!");
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok(new { Username = username, Roles = roles });
+    }
 
 
     [HttpPost("assign-role")]

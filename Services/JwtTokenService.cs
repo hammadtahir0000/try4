@@ -21,34 +21,33 @@ namespace try4.Services
         {
             var authClaims = new List<Claim>
     {
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
+            // Add roles to claims
             var userRoles = await _userManager.GetRolesAsync(user);
             foreach (var role in userRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            // Check if email is confirmed
-            if (!await _userManager.IsEmailConfirmedAsync(user))
-            {
-                authClaims.Add(new Claim("EmailConfirmed", "false"));
-            }
+            // Optionally include email confirmed status
+            authClaims.Add(new Claim("EmailConfirmed", await _userManager.IsEmailConfirmedAsync(user) ? "true" : "false"));
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:DurationInMinutes"])),
+                expires: DateTime.UtcNow.AddHours(1), // Set a reasonable expiration time
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
- 
+
+
     }
 }
